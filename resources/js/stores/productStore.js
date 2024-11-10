@@ -11,6 +11,8 @@ export const useProductStore = defineStore('product',{
             password_confirmation : null,
             device_name : null
         },  
+
+        products : [],
          errors: [],
     }),
 
@@ -46,11 +48,49 @@ export const useProductStore = defineStore('product',{
                 toast.success('Account created successfully, now you can login!');
                 this.router.push({name:'login'});
             }).catch((errors) => {
-                this.register_errors = errors.response.data.errors
+                this.errors = errors.response.data.errors
                 
             });
     
         },
+
+        getProducts()
+        {
+            const toast = useToast();
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('You must be logged in to view products!');
+                return;
+            }
+            axios.get('http://localhost:8000/api/products', {
+                headers: {
+                    'Authorization': `Bearer ${token}` // Include the token here
+                }
+            }).then((response) => {
+                this.products = response.data;
+                console.log(this.products); 
+            }).catch((errors) => {
+                this.errors = errors.response.data.errors;
+                toast.error('Error fetching products. Please try again.');
+            });
+
+        },
+
+        createProduct()
+        {
+
+        },
+
+        UpdateProduct()
+        {
+
+        },
+
+        deleteProduct()
+        {
+
+        }
+
 
     }
 })
