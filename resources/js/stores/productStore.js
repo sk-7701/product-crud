@@ -22,8 +22,10 @@ export const useProductStore = defineStore('product',{
         login()
         {
             const toast = useToast(); 
+            this.form_data.device_name = 'browsers';
             axios.post('http://localhost:8000/api/login', this.form_data).then((response) => {
                 this.form_data.email = this.form_data.password = null;
+                localStorage.setItem('token',response.data)
                 this.errors = [];
                 toast.success('Login Successful!');
                 this.router.push({name:'home'});

@@ -29,6 +29,7 @@ class AuthController extends Controller
 
     }
 
+    //---------------------------------------------------
 
     public function login(Request $request)
     {
@@ -47,6 +48,14 @@ class AuthController extends Controller
         }
      
         return $user->createToken($request->device_name)->plainTextToken;
+    }
+
+    //-----------------------------------------------------
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['msg' => 'Logout Successfull']);
     }
 
 

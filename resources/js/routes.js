@@ -1,7 +1,10 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
+
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
+import Home from './components/Home.vue';
+
 
 const routes = [
 
@@ -18,15 +21,23 @@ const routes = [
   },
 
   {
-    path: '/home',
+    path: '/',
     component: Home,
     name: 'home',
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        next();
+      } else {
+        next({ name: 'login' });
+      }
+    }
   },
 
 ];
 
 const router = createRouter({
-  history: createWebHistory('/product-crud/'),
+  history: createWebHistory(), 
   routes,
 });
 

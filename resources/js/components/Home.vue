@@ -1,5 +1,5 @@
-<component>
+<template>
     <div>
     <p>Home Page</p>
     </div>
-</component>
+</template>
