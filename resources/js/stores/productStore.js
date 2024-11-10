@@ -54,7 +54,7 @@ export const useProductStore = defineStore('product',{
     
         },
 
-        getProducts()
+       async getProducts()
         {
             const toast = useToast();
             const token = localStorage.getItem('token');
@@ -64,7 +64,7 @@ export const useProductStore = defineStore('product',{
             }
             axios.get('http://localhost:8000/api/products', {
                 headers: {
-                    'Authorization': `Bearer ${token}` // Include the token here
+                    'Authorization': `Bearer ${token}`
                 }
             }).then((response) => {
                 this.products = response.data;
@@ -86,8 +86,34 @@ export const useProductStore = defineStore('product',{
 
         },
 
-        deleteProduct()
+        deleteProduct(item)
         {
+            const token = localStorage.getItem('token');
+            const toast = useToast();
+            // Check if the user is logged in
+            if (!token) {
+                toast.error('You must be logged in to delete products!');
+                return;
+            }
+
+            // Show confirmation before deletion
+            if (!confirm("Are you sure you want to delete this product?")) {
+                return;
+            }
+
+            // Send DELETE request to delete the product
+            axios.delete(`http://localhost:8000/api/products/${item.id}`, {
+                headers: {
+            'Authorization': `Bearer ${token}`
+             }
+        })
+        .then((response) => {
+        toast.success('Product deleted successfully!');
+         this.getProducts(); 
+    })
+    .catch((errors) => {
+            toast.error('Error deleting product. Please try again.');
+    });
 
         }
 

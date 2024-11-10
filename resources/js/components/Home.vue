@@ -49,7 +49,7 @@ onMounted(async () => {
                   <button class="btn btn-primary btn-sm" @click="store.editProduct(product.id)">
                     <i class="fas fa-edit"></i>
                 </button>
-                  <button class="btn btn-danger btn-sm ml-2" @click="store.deleteProduct(product.id)">
+                  <button class="btn btn-danger btn-sm ml-2" @click="store.deleteProduct(product)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </td>

@@ -12,4 +12,14 @@ class ProductController extends Controller
         $data = Product::all();
         return response()->json($data);
     }
+
+    //-------------------------
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully']);
+    }
+
 }
