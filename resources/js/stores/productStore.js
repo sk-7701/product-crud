@@ -8,10 +8,12 @@ export const useProductStore = defineStore('product',{
             name : null,
             email : null,
             password : null,
-            password_confirmation : null
+            password_confirmation : null,
+            device_name : null
         },  
-        register_errors : [],
+         errors: [],
     }),
+
     getters : {
 
     },
@@ -19,6 +21,16 @@ export const useProductStore = defineStore('product',{
     actions: {
         login()
         {
+            const toast = useToast(); 
+            axios.post('http://localhost:8000/api/login', this.form_data).then((response) => {
+                this.form_data.email = this.form_data.password = null;
+                this.errors = [];
+                toast.success('Login Successful!');
+                this.router.push({name:'home'});
+            }).catch((errors) => {
+                this.errors = errors.response.data.errors
+                
+            });
 
         },
 
@@ -28,6 +40,7 @@ export const useProductStore = defineStore('product',{
             const toast = useToast(); 
             axios.post('http://localhost:8000/api/register', this.form_data).then((response) => {
                 this.form_data.name = this.form_data.email = this.form_data.password = this.form_data.password_confirmation = null;
+                this.errors = [];
                 toast.success('Account created successfully, now you can login!');
                 this.router.push({name:'login'});
             }).catch((errors) => {
