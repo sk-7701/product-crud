@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 text-right">
-                                
+                                <router-link to="/register">Create New Account!</router-link>
                             </div>
                         </div>
                     </div>
