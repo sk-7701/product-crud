@@ -14,6 +14,16 @@ export const useProductStore = defineStore('product',{
 
         products : [],
          errors: [],
+         show_product_form : false,
+         product_item :
+         {
+        
+            name : null,
+            descripton : null,
+            price : null,
+            image : null
+
+         }
     }),
 
     getters : {
@@ -76,10 +86,51 @@ export const useProductStore = defineStore('product',{
 
         },
 
-        createProduct()
-        {
+        async createProduct() {
 
-        },
+            const toast = useToast();
+            const { name, description, price, image } = this.product_item;
+    
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('price', price);
+            
+            if (description) {
+                formData.append('description', description);
+              }
+              
+              if (image) {
+                formData.append('image', image); 
+              }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+              toast.error('Authorization token not found');
+              return; 
+            }
+      
+            try {
+              
+              const response = await axios.post('http://localhost:8000/api/products', formData, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'multipart/form-data', 
+                },
+              });
+      
+              toast.success('Product created successfully');
+              this.resetProductItem();
+              this.getProducts();
+              return response.data; 
+            } catch (error) {
+              toast.error('Error creating product');
+              throw error; 
+            }
+          },
+      
+      
+            
+        //-----------------------------------
 
         UpdateProduct()
         {
@@ -115,7 +166,26 @@ export const useProductStore = defineStore('product',{
             toast.error('Error deleting product. Please try again.');
     });
 
-        }
+        },
+        
+        //------------------------------------
+
+        resetProductItem() {
+
+            this.product_item = {
+              name: null,
+              description:null,
+              price:null,
+              image: null,
+            };
+          },
+
+         handleImageUpload(event){
+            const file = event.target.files[0];
+            if (file) {
+              this.product_item.image= file;    
+            }
+          }
 
 
     }
