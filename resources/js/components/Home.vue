@@ -12,13 +12,21 @@ onMounted(async () => {
 
 <template>
   <div class="container mt-5">
-    <!-- Main Content Card -->
     <div class="card">
-      <div class="card-header text-center">
-        <h1>Product List</h1>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="m-0">Products 
+            <span class="badge bg-primary ms-2">{{ store.products.length }}</span>
+          </h1>
+        </div>
+        
+        <button 
+          class="btn btn-success btn-sm" 
+          @click="store.show_product_form = true;">
+          <i class="fas fa-plus"></i> Create Product
+        </button>
       </div>
       <div class="card-body">
-        <!-- DataTable without Pagination -->
         <div v-if="store.products.length > 0">
           <table class="table table-striped table-bordered table-hover">
             <thead>
@@ -59,6 +67,38 @@ onMounted(async () => {
         </div>
 
         <p v-else class="text-center text-muted">No products available.</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" :class="{'show': store.show_product_form}" style="display: block;" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Product</h5>
+          <button type="button" class="btn-close" @click="toggleModal"></button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="handleSubmit">
+            
+            <div class="mb-3">
+              <label for="name" class="form-label">Product Name</label>
+              <input type="text" id="name"  class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea id="description"  class="form-control" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Price</label>
+              <input type="number" id="price"  class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="image" class="form-label">Image URL</label>
+              <input type="text" id="image"  class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success w-100">Create Product</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
