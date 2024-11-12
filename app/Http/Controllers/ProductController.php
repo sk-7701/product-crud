@@ -9,32 +9,32 @@ class ProductController extends Controller
     public function index()
     {
 
-        $data = Product::all();
+        $data = Product::orderBy('created_at', 'desc')->get();
         return response()->json($data);
     }
 
     //-------------------------
+
     public function store(Request $request)
     {
     
         $request->validate([
-            
-            'name' => 'required|string|max:255',
-            'description' => 'string|required',
-            'price' => 'required|numeric',
+
+            'name' => 'required|string|max:100',
+            'description' => 'string|required|max:250',
+            'price' => 'required|numeric|regex:/^\d{1,8}(\.\d{1,2})?$/',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
             
         ]);
 
 
-        // Handle the image upload
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $image_name = date('Y-m-d').$file->getClientOriginalName();
             $file->move(public_path('images'),$image_name);
         }
 
-        // Create the product record
+
         $product = Product::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -55,26 +55,35 @@ class ProductController extends Controller
     public function update(Request $request,$id)
     {
 
+        
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'string|required',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            
             
         ]);
-       
+        
+        $image_name = '';
          if ($request->hasFile('image')) {
+            
             $file = $request->file('image');
             $image_name = date('Y-m-d').$file->getClientOriginalName();
             $file->move(public_path('images'),$image_name);
         }
 
+    
         $product = Product::find($id);
         
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
-        $product->image = $image_name ?? null;
+        
+       if($image_name)
+       {
+        $product->image = $image_name;
+       }
         $product->save();
         return response()->json([
             'success' => true,
