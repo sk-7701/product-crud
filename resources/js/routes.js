@@ -24,14 +24,7 @@ const routes = [
     path: '/',
     component: Home,
     name: 'home',
-    beforeEnter: (to, from, next) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        next();
-      } else {
-        next({ name: 'login' });
-      }
-    }
+    meta: { requiresAuth: true },
   },
 
 ];
@@ -40,5 +33,20 @@ const router = createRouter({
   history: createWebHistory(), 
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  
+  const requiresAuth = to.meta.requiresAuth;
+
+  
+  const token = localStorage.getItem('token');
+  
+  if (requiresAuth && !token) {
+    return next({ name: 'login' }); 
+  }
+
+  next();
+});
+
 
 export default router;
