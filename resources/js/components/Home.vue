@@ -4,14 +4,7 @@ import { useProductStore } from '@/stores/productStore';
 
 const store = useProductStore();
 
-// Form data
-const form = ref({
-  id: null,
-  name: '',
-  description: '',
-  price: null,
-  image: ''
-});
+
 const formTitle = ref('Create Product');
 const formButtonText = ref('Create Product');
 
@@ -27,12 +20,12 @@ const toggleForm = () => {
  
 };
 
-// Open form to edit product
 const editProduct = (product) => {
+  
   formTitle.value = 'Edit Product';
   formButtonText.value = 'Save Changes';
 
-  form.value = { ...product }; // Fill form with product data
+  store.product_item = { ...product }; 
 };
 
 
@@ -83,7 +76,7 @@ const editProduct = (product) => {
                       <div v-else class="text-center text-muted">No Image</div>
                     </td>
                     <td>
-                      <button class="btn btn-primary btn-sm" @click="store.editProduct(product)">
+                      <button class="btn btn-primary btn-sm" @click="editProduct(product)">
                         <i class="fas fa-edit"></i>
                       </button>
                       <button class="btn btn-danger btn-sm ml-2" @click="store.deleteProduct(product)">
@@ -119,10 +112,25 @@ const editProduct = (product) => {
                 <label for="price" class="form-label">Price</label>
                 <input type="number" id="price" class="form-control" v-model="store.product_item.price" required />
               </div>
+
+              <div v-if="store.product_item.image" class="mb-3">
+              <img 
+              :src="`images/` + store.product_item.image" 
+              alt="Current Product Image" 
+              class="img-fluid" 
+              style="max-width: 100px; object-fit: cover;" 
+              />
+              </div>
+              <div v-else class="text-center text-muted mt-2">
+              No Image Selected
+              </div>
+
               <div class="mb-3">
                 <label for="image" class="form-label">Product Image</label>
                 <input type="file" id="image" class="form-control" @change="store.handleImageUpload($event)" />
               </div>
+
+            
               <button type="submit" class="btn btn-success w-100">{{ formButtonText }}</button>
             </form>
           </div>
