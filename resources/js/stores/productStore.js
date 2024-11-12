@@ -25,7 +25,9 @@ export const useProductStore = defineStore('product',{
             price : null,
             image : null
 
-         }
+         },
+         file:null,
+         errors : [],
     }),
 
     getters : {
@@ -68,6 +70,8 @@ export const useProductStore = defineStore('product',{
     
         },
 
+        //-------------------------------------------------
+
        async getProducts()
         {
             const toast = useToast();
@@ -89,6 +93,8 @@ export const useProductStore = defineStore('product',{
             });
 
         },
+
+        //--------------------------------------------------------
 
         async createProduct() {
 
@@ -125,13 +131,15 @@ export const useProductStore = defineStore('product',{
               toast.success('Product created successfully');
               this.resetProductItem();
               this.getProducts();
+              this.errors = [];
+              if(this.$refs.file) {
+                this.$refs.file.value = '';
+            }
               return response.data; 
             } catch (error) {
               if (error.response && error.response.data.errors) {
                 this.errors = error.response.data.errors;
-            } else {
-                toast.error('Error saving product');
-            }
+            } 
             }
           },
       
@@ -142,21 +150,22 @@ export const useProductStore = defineStore('product',{
        async  updateProduct()
         {
 
-          
           const toast = useToast();
 
           const { name, description, price, image, id } = this.product_item;
           
-          let formData = {
-
-            id : this.product_item.id,
-            name : this.product_item.name,
-            price : this.product_item.price,
-            description : this.product_item.description,
-            image : this.product_item.image
-          };
         
-          console.log(formData);
+        let formData = {
+
+          name : name ,
+          description : description,
+          price : price,
+          image : image
+
+        }
+        
+      
+      
           const token = localStorage.getItem('token');
           if (!token) {
             toast.error('Authorization token not found');
@@ -171,7 +180,7 @@ export const useProductStore = defineStore('product',{
               response = await axios.put(`http://localhost:8000/api/products/${id}`,formData, {
                 headers: {
                   'Authorization': `Bearer ${token}`,
-                 
+                  
                 },
               });
               
@@ -180,15 +189,13 @@ export const useProductStore = defineStore('product',{
           
             this.resetProductItem();
             this.getProducts();
-            
+            this.errors = [];
+
             return response.data;
           } catch (error) {
-            
             if (error.response && error.response.data.errors) {
               this.errors = error.response.data.errors;
-          } else {
-              toast.error('Error saving product');
-          }
+          } 
           }
 
         },
@@ -254,10 +261,11 @@ export const useProductStore = defineStore('product',{
           //---------------------------------------
 
           handleImageUpload(event) {
+           
             const file = event.target.files[0];
             if (file) {
               this.product_item.image = file;
-            
+          
             }
           }
 

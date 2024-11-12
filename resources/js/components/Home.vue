@@ -7,18 +7,16 @@ const store = useProductStore();
 const formTitle = ref('Create Product');
 const formButtonText = ref('Create Product');
 
-// Initialize product list
+
 onMounted(async () => {
   await store.getProducts();
 });
 
-// Open form to create product
 const toggleForm = () => {
   formTitle.value = 'Create Product';
   formButtonText.value = 'Create Product';
 };
 
-// Edit product
 const editProduct = (product) => {
   formTitle.value = 'Edit Product';
   formButtonText.value = 'Save Changes';
@@ -27,7 +25,6 @@ const editProduct = (product) => {
   store.preview_image = product.image;
 };
 
-
 const logout = () => {
   localStorage.removeItem('token');  
   window.location.href = '/login';  
@@ -35,42 +32,38 @@ const logout = () => {
 </script>
 
 <template>
-  <div class="container">
-    <!-- Header with Navbar -->
-    <header class="bg-dark text-white p-3">
-      <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-          <div class="container-fluid">
-            <router-link to="/" class="navbar-brand">Home</router-link>
-            <div class="d-flex justify-content-end">
-              <!-- User Welcome Message -->
-              <span class="navbar-text me-3">
-                Welcome {{ store.user?.name || 'user' }}!
-              </span>
-              <!-- Logout Button -->
-              <button @click="logout" class="btn btn-outline-light btn-sm">
-                Logout
-              </button>
-            </div>
-          </div>
-        </nav>
+  <div class="container-fluid">
+   
+    <header class="bg-dark text-white p-3 mb-4">
+      <div class="container d-flex justify-content-between align-items-center">
+        <router-link to="/" class="navbar-brand fs-4 fw-bold text-white">
+          Home
+        </router-link>
+        <div class="d-flex align-items-center">
+          <span class="navbar-text text-white me-4 fs-5">
+            Welcome user !
+          </span>
+          
+          <button @click="logout" class="btn btn-outline-light btn-sm">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
-    <div class="row mt-3">
-      <!-- Product Table on the Left -->
-      <div class="col-md-8">
-        <div class="card">
+    <div class="row">
+     
+      <div class="col-lg-8 col-md-12 mb-4">
+        <div class="card shadow-sm">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-              <h1 class="m-0">Products
-                <span class="badge bg-primary ms-2">{{ store.products.length }}</span>
-              </h1>
+            <div class="d-flex justify-content-between align-items-center">
+              <h1 class="m-2">Products</h1>
+              <span class="badge bg-primary">{{ store.products.length }}</span>
             </div>
           </div>
           <div class="card-body">
             <div v-if="store.products.length > 0">
-              <table class="table table-striped table-bordered table-hover">
+              <table class="table table-striped table-hover">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -88,7 +81,7 @@ const logout = () => {
                     <td>
                       <img
                         v-if="product.image"
-                        :src="`images/`+product.image"
+                        :src="`images/` + product.image"
                         alt="Product Image"
                         class="img-fluid"
                         style="max-width: 100px; object-fit: cover;"
@@ -112,55 +105,47 @@ const logout = () => {
         </div>
       </div>
 
-      <!-- Product Form on the Right -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
+     
+      <div class="col-lg-4 col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
             <h5 class="modal-title">{{ formTitle }}</h5>
           </div>
           <div class="card-body">
             <form @submit.prevent="store.handleFormSubmit()" enctype="multipart/form-data">
+              
               <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" id="name" class="form-control" v-model="store.product_item.name" />
-                <p v-if="store.errors.name" class="text-danger">
-                  {{ store.errors.name[0] }}
-                </p>
+                <input type="text" id="name" class="form-control" v-model="store.product_item.name" required />
+                <p v-if="store.errors.name" class="text-danger mt-2">{{ store.errors.name[0] }}</p>
               </div>
+
+             
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea id="description" class="form-control" v-model="store.product_item.description"></textarea>
-                <p v-if="store.errors.description" class="text-danger">
-                  {{ store.errors.description[0] }}
-                </p>
+                <p v-if="store.errors.description" class="text-danger mt-2">{{ store.errors.description[0] }}</p>
               </div>
+
+             
               <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
                 <input type="number" id="price" class="form-control" v-model="store.product_item.price" />
-                <p v-if="store.errors.price" class="text-danger">
-                  {{ store.errors.price[0] }}
-                </p>
+                <p v-if="store.errors.price" class="text-danger mt-2">{{ store.errors.price[0] }}</p>
               </div>
 
+              
               <div v-if="store.product_item.image && store.product_item.id" class="mb-3">
-                <img 
-                  :src="`images/` + store.preview_image" 
-                  alt="Current Product Image" 
-                  class="img-fluid" 
-                  style="max-width: 100px; object-fit: cover;" 
-                />
+                <img :src="`images/` + store.preview_image" alt="Current Product Image" class="img-fluid" style="max-width: 100px; object-fit: cover;" />
               </div>
 
+            
               <div class="mb-3">
                 <label for="image" class="form-label">Product Image</label>
-                <input 
-                  type="file"
-                  id="image"
-                  class="form-control"
-                  @change="store.handleImageUpload($event)"
-                />
+                <input type="file" id="image" class="form-control" @change="store.handleImageUpload($event)" />
               </div>
 
+              
               <button type="submit" class="btn btn-success w-100">{{ formButtonText }}</button>
             </form>
           </div>
@@ -174,7 +159,6 @@ const logout = () => {
   header {
     background-color: #343a40;
     color: white;
-    padding: 1rem;
   }
 
   .navbar-brand {
@@ -182,12 +166,11 @@ const logout = () => {
   }
 
   .navbar-text {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
-  .btn-logout {
-    background-color: #dc3545;
-    color: white;
+  .btn-outline-light {
+    border-color: #fff;
   }
 
   .card-header {
@@ -200,5 +183,36 @@ const logout = () => {
 
   .table th, .table td {
     vertical-align: middle;
+  }
+
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    background-color: #f1f1f1;
+    font-weight: bold;
+  }
+
+  .btn-primary, .btn-danger, .btn-success {
+    transition: background-color 0.3s;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
   }
 </style>
