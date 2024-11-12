@@ -25,7 +25,8 @@ const editProduct = (product) => {
   formTitle.value = 'Edit Product';
   formButtonText.value = 'Save Changes';
 
-  store.product_item = { ...product }; 
+  store.product_item = { ...product };
+  store.preview_image = product.image; 
 };
 
 
@@ -99,7 +100,7 @@ const editProduct = (product) => {
             <h5 class="modal-title">{{ formTitle }}</h5>
           </div>
           <div class="card-body">
-            <form @submit.prevent="store.createProduct()">
+            <form @submit.prevent="store.handleFormSubmit()">
               <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
                 <input type="text" id="name" class="form-control" v-model="store.product_item.name" required />
@@ -115,22 +116,19 @@ const editProduct = (product) => {
 
               <div v-if="store.product_item.image" class="mb-3">
               <img 
-              :src="`images/` + store.product_item.image" 
+              :src="`images/` + store.preview_image" 
               alt="Current Product Image" 
               class="img-fluid" 
               style="max-width: 100px; object-fit: cover;" 
               />
               </div>
-              <div v-else class="text-center text-muted mt-2">
-              No Image Selected
-              </div>
-
+              
               <div class="mb-3">
                 <label for="image" class="form-label">Product Image</label>
                 <input type="file" id="image" class="form-control" @change="store.handleImageUpload($event)" />
               </div>
-
             
+
               <button type="submit" class="btn btn-success w-100">{{ formButtonText }}</button>
             </form>
           </div>

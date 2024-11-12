@@ -12,6 +12,8 @@ export const useProductStore = defineStore('product',{
             device_name : null
         },  
 
+        preview_image : null,
+
         products : [],
          errors: [],
          show_product_form : false,
@@ -47,6 +49,8 @@ export const useProductStore = defineStore('product',{
             });
 
         },
+
+        //----------------------------------------------
 
         registerUser()
         {
@@ -132,8 +136,55 @@ export const useProductStore = defineStore('product',{
             
         //-----------------------------------
 
-        UpdateProduct()
+       async  updateProduct()
         {
+
+          
+          const toast = useToast();
+
+          const { name, description, price, image, id } = this.product_item;
+          
+          let formData = {
+
+            id : this.product_item.id,
+            name : this.product_item.name,
+            price : this.product_item.price,
+            description : this.product_item.description,
+            image : this.product_item.image
+          };
+        
+          console.log(formData);
+          const token = localStorage.getItem('token');
+          if (!token) {
+            toast.error('Authorization token not found');
+            return;
+          }
+          
+          try {
+            let response;
+          
+            if (id) {
+              
+              response = await axios.put(`http://localhost:8000/api/products/${id}`,formData, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                 
+                },
+              });
+              
+              toast.success('Product updated successfully');
+            } 
+          
+            this.resetProductItem();
+            this.getProducts();
+            
+            return response.data;
+          } catch (error) {
+            
+            toast.error(error.response?.data?.message || 'Error saving product');
+          
+            throw error; 
+          }
 
         },
 
@@ -180,11 +231,16 @@ export const useProductStore = defineStore('product',{
             };
           },
 
-         handleImageUpload(event){
-            const file = event.target.files[0];
-            if (file) {
-              this.product_item.image= file;    
+          //------------------------------------
+          handleFormSubmit() {
+            if (this.product_item.id) {
+              
+              this.updateProduct();
+            } else {
+              
+              this.createProduct();
             }
+
           }
 
 
