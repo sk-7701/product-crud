@@ -127,8 +127,11 @@ export const useProductStore = defineStore('product',{
               this.getProducts();
               return response.data; 
             } catch (error) {
-              toast.error('Error creating product');
-              throw error; 
+              if (error.response && error.response.data.errors) {
+                this.errors = error.response.data.errors;
+            } else {
+                toast.error('Error saving product');
+            }
             }
           },
       
@@ -181,12 +184,17 @@ export const useProductStore = defineStore('product',{
             return response.data;
           } catch (error) {
             
-            toast.error(error.response?.data?.message || 'Error saving product');
-          
-            throw error; 
+            if (error.response && error.response.data.errors) {
+              this.errors = error.response.data.errors;
+          } else {
+              toast.error('Error saving product');
+          }
           }
 
         },
+
+        //----------------------------------------------
+
 
         deleteProduct(item)
         {
@@ -241,6 +249,16 @@ export const useProductStore = defineStore('product',{
               this.createProduct();
             }
 
+          },
+
+          //---------------------------------------
+
+          handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+              this.product_item.image = file;
+            
+            }
           }
 
 

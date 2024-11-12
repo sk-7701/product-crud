@@ -103,15 +103,24 @@ const editProduct = (product) => {
             <form @submit.prevent="store.handleFormSubmit()">
               <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" id="name" class="form-control" v-model="store.product_item.name" required />
+                <input type="text" id="name" class="form-control" v-model="store.product_item.name" />
+                <p v-if="store.errors.name" class="text-danger">
+                    {{ store.errors.name[0] }}
+                </p>
               </div>
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea id="description" class="form-control" v-model="store.product_item.description"></textarea>
+                <p v-if="store.errors.description" class="text-danger">
+                    {{ store.errors.description[0] }}
+                </p>
               </div>
               <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
-                <input type="number" id="price" class="form-control" v-model="store.product_item.price" required />
+                <input type="number" id="price" class="form-control" v-model="store.product_item.price" />
+                <p v-if="store.errors.price" class="text-danger">
+                    {{ store.errors.price[0] }}
+                </p>
               </div>
 
               <div v-if="store.product_item.image" class="mb-3">
